@@ -20,9 +20,14 @@ from mycroft.util.lang import get_primary_lang_code
 
 from mycroft.util.lang.parse_en import *
 from mycroft.util.lang.parse_pt import *
-from mycroft.util.lang.parse_es import *
 from mycroft.util.lang.parse_it import *
 from mycroft.util.lang.parse_sv import *
+
+from mycroft.util.lang.parse_es import extractnumber_es
+from mycroft.util.lang.parse_es import extract_numbers_es
+from mycroft.util.lang.parse_es import extract_datetime_es
+from mycroft.util.lang.parse_es import normalize_es
+from mycroft.util.lang.parse_es import get_gender_es
 
 from mycroft.util.lang.parse_de import extractnumber_de
 from mycroft.util.lang.parse_de import extract_numbers_de
@@ -112,6 +117,8 @@ def extract_numbers(text, short_scale=True, ordinals=False, lang=None):
     lang_code = get_primary_lang_code(lang)
     if lang_code == "en":
         return extract_numbers_en(text, short_scale, ordinals)
+    elif lang_code == "es":
+        return extract_numbers_es(text, short_scale, ordinals)            
     elif lang_code == "de":
         return extract_numbers_de(text, short_scale, ordinals)
     elif lang_code == "fr":
@@ -143,7 +150,8 @@ def extract_number(text, short_scale=True, ordinals=False, lang=None):
         return extractnumber_en(text, short_scale=short_scale,
                                 ordinals=ordinals)
     elif lang_code == "es":
-        return extractnumber_es(text)
+        return extractnumber_es(text, short_scale=short_scale,
+                                ordinals=ordinals)
     elif lang_code == "pt":
         return extractnumber_pt(text)
     elif lang_code == "it":
@@ -158,7 +166,7 @@ def extract_number(text, short_scale=True, ordinals=False, lang=None):
     elif lang_code == "da":
         return extractnumber_da(text)
     # TODO: extractnumber_xx for other languages
-    _log_unsupported_language(lang_lower,
+    _log_unsupported_language(lang.lower(),
                               ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da'])
     return text
 
@@ -336,9 +344,10 @@ def get_gender(word, context="", lang=None):
 
     lang_code = get_primary_lang_code(lang)
 
-    if lang_code in ["pt", "es"]:
-        # spanish follows same rules
+    if lang_code == "pt":
         return get_gender_pt(word, context)
+    elif lang_code == "es":
+        return get_gender_es(word, context)
     elif lang_code == "it":
         return get_gender_it(word, context)
     return None
